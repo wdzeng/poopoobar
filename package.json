@@ -1,0 +1,32 @@
+{
+  "name": "typescript-template",
+  "version": "0.1.0",
+  "description": "A typescript project template",
+  "author": {
+    "name": "hyperbola",
+    "email": "me@hyperbola.me",
+    "url": "https://blog.hyperbola.me"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/wdzeng/typescript-template",
+  "bugs": {
+    "url": "https://github.com/wdzeng/typescript-template/issues",
+    "email": "me@hyperbola.me"
+  },
+  "packageManager": "pnpm@^8.9.2",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "build": "pnpm clean && ./build/index.cjs",
+    "clean": "rm -rf dist",
+    "lint": "eslint src/ --ext .ts,.cts,.mts --fix --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.10",
+    "esbuild": "^0.19.5",
+    "eslint": "^8.53.0",
+    "eslint-config-wdzeng": "github:wdzeng/eslint-config#semver:^0.5.1",
+    "prettier": "^3.0.3",
+    "tsx": "^3.14.0",
+    "typescript": "^5.2.2"
+  }
+}

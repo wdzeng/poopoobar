@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    // Environment and module options.
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "lib": [
+      "ES2022",
+      // Uncomment these to access document and fetch API.
+      // "DOM",
+      // "DOM.Iterable"
+    ],
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "strict": true,
+    "alwaysStrict": true,
+  },
+  "include": ["src/**/*.ts", "types/global.d.ts"]
+}
