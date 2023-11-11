@@ -1,8 +1,6 @@
-import util from 'node:util'
+import * as util from 'node:util'
 
-// TODO: we import this package just because of two characters. Remove it.
-import ansiEscapes from 'ansi-escapes'
-
+import { hideCursor, showCursor } from '@/cursor'
 import { EtaTracker } from '@/eta-tracker'
 import { humanizeDuration, humanizeSpeed } from '@/humanize'
 
@@ -121,7 +119,10 @@ export class ProgressBar {
       this.latestEta = this.etaCalculator.updateProgressAndGetLatestEta(this._progress, this.total)
       this.refresh()
     }, 1000) // Update ETA per second.
-    this.output.write(ansiEscapes.cursorHide)
+
+    // TODO: if the user Ctrl+C the program, the cursor will not be shown. Use process.on('SIGINT')
+    // to fix this problem.
+    hideCursor(this.output)
     this.state = BarState.RUNNING
   }
 
@@ -340,8 +341,8 @@ export class ProgressBar {
     } else {
       this.output.write('\n')
     }
-    this.output.write(ansiEscapes.cursorShow)
 
+    showCursor(this.output)
     this.state = BarState.STOPPED
   }
 }

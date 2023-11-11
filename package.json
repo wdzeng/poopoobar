@@ -24,9 +24,6 @@
     "build": "tsc && tsc-alias",
     "lint": "eslint src/ --ext .ts,.cts,.mts --fix --ignore-path .gitignore"
   },
-  "dependencies": {
-    "ansi-escapes": "^6.2.0"
-  },
   "devDependencies": {
     "@types/node": "^20.8.10",
     "eslint": "^8.53.0",
