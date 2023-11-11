@@ -5,7 +5,7 @@ A cool CLI progress bar.
 ![demo](./docs/demo.gif)
 
 - Simple: easy to use.
-- Lightweight: very few dependencies.
+- Lightweight: no dependency.
 - Informative: instant and precise progress, ETA, and speed
 - Smart: silent on non-tty.
 - TypeScript supported.
