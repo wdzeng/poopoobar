@@ -22,8 +22,8 @@ npm install poopoobar
 A simple example:
 
 ```js
-import ProgressBar from 'poopoobar' // ESM
-const ProgressBar = require('poopoobar') // commonjs
+import { ProgressBar } from 'poopoobar' // ESM
+const { ProgressBar } = require('poopoobar') // commonjs
 
 const bar = new ProgressBar(100)
 bar.start()
@@ -38,8 +38,8 @@ bar.stop()
 Another example:
 
 ```js
-import ProgressBar from 'poopoobar' // ESM
-const ProgressBar = require('poopoobar') // commonjs
+import { ProgressBar } from 'poopoobar' // ESM
+const { ProgressBar } = require('poopoobar') // commonjs
 
 const bar = new ProgressBar(100, { clearAfterStop: true, width: 80 })
 bar.start()
