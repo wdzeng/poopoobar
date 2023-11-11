@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
     // Environment and module options.
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "module": "CommonJS",
     "esModuleInterop": true,
     "lib": [
       "ES2022",
@@ -17,7 +16,10 @@
       "@/*": ["src/*"]
     },
     "strict": true,
-    "alwaysStrict": true
+    "alwaysStrict": true,
+
+    "declaration": true,
+    "outDir": "dist",
   },
   "include": ["src/**/*.ts"]
 }

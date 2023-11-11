@@ -14,9 +14,17 @@
     "email": "me@hyperbola.me"
   },
   "packageManager": "pnpm@^8.9.2",
+  "type": "module",
   "scripts": {
-    "lint": "eslint src/ --ext .ts,.cts,.mts --fix --ignore-path .gitignore"
+    "build": "tsc",
+    "lint": "eslint src/ --ext .ts,.cts,.mts --fix --ignore-path .gitignore",
+    "prepack": "$npm_execpath run build"
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "ansi-escapes": "^6.2.0"
   },
