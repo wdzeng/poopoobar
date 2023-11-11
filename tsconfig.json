@@ -13,10 +13,6 @@
     ],
     "rootDir": "src",
     "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "strict": true,
     "alwaysStrict": true,
   },
