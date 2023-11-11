@@ -1,30 +1,28 @@
 {
-  "name": "progress",
+  "name": "poopoobar",
   "version": "0.1.0",
-  "description": "A CLI progress bar",
+  "description": "A cool CLI progress bar",
   "author": {
     "name": "hyperbola",
     "email": "me@hyperbola.me",
     "url": "https://blog.hyperbola.me"
   },
   "license": "MIT",
-  "homepage": "https://github.com/wdzeng/progress",
+  "homepage": "https://github.com/wdzeng/poopoobar",
   "bugs": {
-    "url": "https://github.com/wdzeng/progress/issues",
+    "url": "https://github.com/wdzeng/poopoobar/issues",
     "email": "me@hyperbola.me"
   },
-  "packageManager": "pnpm@^8.9.2",
   "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "lint": "eslint src/ --ext .ts,.cts,.mts --fix --ignore-path .gitignore",
-    "prepack": "$npm_execpath run build"
-  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/ --ext .ts,.cts,.mts --fix --ignore-path .gitignore"
+  },
   "dependencies": {
     "ansi-escapes": "^6.2.0"
   },
