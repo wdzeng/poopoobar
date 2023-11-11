@@ -1,8 +1,8 @@
 import * as util from 'node:util'
 
-import { hideCursor, showCursor } from '@/cursor'
-import { EtaTracker } from '@/eta-tracker'
-import { humanizeDuration, humanizeSpeed } from '@/humanize'
+import { hideCursor, showCursor } from './cursor'
+import { EtaTracker } from './eta-tracker'
+import { humanizeDuration, humanizeSpeed } from './humanize'
 
 import type { WriteStream } from 'node:tty'
 

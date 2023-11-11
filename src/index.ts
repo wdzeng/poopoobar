@@ -1,1 +1,1 @@
-export { ProgressBar, Options, MIN_BAR_WIDTH } from '@/progress-bar'
+export { ProgressBar, Options, MIN_BAR_WIDTH } from './progress-bar'
