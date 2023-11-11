@@ -15,14 +15,16 @@
   },
   "type": "module",
   "publishConfig": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        },
+        "require": {
+          "types": "./dist/index.d.cts",
+          "default": "./dist/index.cjs"
+        }
       }
     }
   },
@@ -32,7 +34,7 @@
     "src",
     "dist",
     "docs",
-    "tsconfig"
+    "tsconfig.json"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
