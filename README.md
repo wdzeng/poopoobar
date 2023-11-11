@@ -2,6 +2,8 @@
 
 A cool CLI progress bar.
 
+![demo](./docs/demo.gif)
+
 - Simple: easy to use.
 - Lightweight: very few dependencies.
 - Informative: instant and precise progress, ETA, and speed
