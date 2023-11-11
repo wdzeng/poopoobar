@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     // Environment and module options.
-    "target": "ES2022",
-    "module": "CommonJS",
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "lib": [
       "ES2022",
@@ -11,15 +12,13 @@
       // "DOM.Iterable"
     ],
     "rootDir": "src",
+    "outDir": "dist",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
     "strict": true,
     "alwaysStrict": true,
-
-    "declaration": true,
-    "outDir": "dist",
   },
   "include": ["src/**/*.ts"]
 }

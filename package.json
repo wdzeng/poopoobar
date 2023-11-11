@@ -14,14 +14,28 @@
     "email": "me@hyperbola.me"
   },
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "publishConfig": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "exports": "./src/index.ts",
+  "types": "./src/index.ts",
   "files": [
+    "src",
     "dist",
-    "docs"
+    "docs",
+    "tsconfig"
   ],
   "scripts": {
-    "build": "tsc && tsc-alias",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "lint": "eslint src/ --ext .ts,.cts,.mts --fix --ignore-path .gitignore"
   },
   "devDependencies": {
@@ -30,6 +44,7 @@
     "eslint-config-wdzeng": "github:wdzeng/eslint-config#semver:^0.5.1",
     "prettier": "^3.0.3",
     "tsc-alias": "^1.8.8",
+    "tsup": "^7.2.0",
     "tsx": "^3.14.0",
     "typescript": "^5.2.2"
   }
