@@ -1,76 +1,113 @@
-# TypeScript Template
+# PooPooBar
 
-My typescript project template. Integrates with:
+A cool CLI progress bar.
 
-- Node.js v20
-- Pnpm
-- ECMAScript 2022
-- ESM modules
-- TypeScript v5
-- ESLint/Prettier
+- Simple: easy to use.
+- Lightweight: very few dependencies.
+- Informative: instant and precise progress, ETA, and speed
+- Smart: silent on non-tty.
+- TypeScript supported.
+- CommonJS/ESM supported.
 
-## Node and TypeScript Configurations
+## Installation
 
-### ES2022
+```sh
+npm install poopoobar
+```
 
-This template integrates with ECMAScript 2022, so `target` and `module` fields in tsconfig are set
-to `es2022`.
+## Usage
 
-### ES Module
-
-This template is using ES module (ESM), so `type` is set to `module` in package.json and
-`moduleResolution` set to `bundler` in tsconfig.
-
-Replace `require` with `import`; do not use `exports` or `modules.export`.
+A simple example:
 
 ```js
-❌ const fs = require('fs')
-✅ import fs from 'node:fs'
+import ProgressBar from 'poopoobar' // ESM
+const ProgressBar = require('poopoobar') // commonjs
+
+const bar = new ProgressBar(100)
+bar.start()
+
+for (let i=0; i<100; i++) {
+  do_task()
+  bar.tick()
+}
+bar.stop()
 ```
 
-Prevent CJS-only syntax. See [Differences between ES modules and CommonJS](https://nodejs.org/api/esm.html#differences-between-es-modules-and-commonjs).
+Another example:
 
 ```js
-❌ const currentDir = __dirname
-✅ const currentDir = path.dirname(url.fileURLToPath(import.meta.url))
+import ProgressBar from 'poopoobar' // ESM
+const ProgressBar = require('poopoobar') // commonjs
+
+const bar = new ProgressBar(100, { clearAfterStop: true, width: 80 })
+bar.start()
+
+try {
+  for (let i=0; i<100; i+=2) {
+    bar.log('Start task %d and %d', i, i+1)
+    do_two_tasks()
+    bar.tick(2)
+    bar.log('Task %d and %d finished', i, i+1)
+  }
+} finally {
+  bar.stop()
+}
 ```
 
-### Path Alias
+## API
 
-The template is using path alias `@` which is set to `src`.
+- **`class ProgressBar`**
 
-```ts
-import helloworld from '@/helloworld.js'
-```
+  | Property | Type | Description |
+  | -------- | ---- | ----------- |
+  | `progress` | `number` | current progress value; guaranteed to be a non-negative integer |
+  | `total` | `number` | total progress value; guaranteed to be a positive integer |
 
-Please update `paths` field in tsconfig to change path aliases.
+- **`ProgressBar(total: number, options?: object)`**
 
-## Development
+  Creates a progress bar instance.
 
-This template is using [`tsx`](https://github.com/esbuild-kit/tsx) for development.
+  | Argument | Type | Description |
+  | -------- | ---- | ----------- |
+  | `total`  | `number` | total progress; must be a positive integer |
+  | `options?` | `object` | progress bar options; default to all default options |
+  | `options.width?` | `number` | progress bar width; must be at least 16; default to terminal column count |
+  | `options.output?` | [`tty.WriteStream`](https://nodejs.org/api/tty.html#class-ttywritestream) | output stream; default to [`process.stderr`](https://nodejs.org/api/process.html#processstderr) |
+  | `options.clearAfterStop?` | `boolean` |  clear the bar after stopping; default to `false` |
 
-```shell
-pnpm dev
-```
+  You probably don't want to use two progress bars simultaneously,
+  as this can break the drawing.
 
-## Linting
+- **`progressBar.start()`**
 
-This template leverages ESLint and Prettier, using my custom eslint configurations at
-[`wdzeng/eslint-config`](https://github.com/wdzeng/eslint-config).
+  Start the progress bar. By this time the progress bar is drawn on the terminal and is refreshed
+  periodically. This cannot be called twice.
 
-Please use ESLint as default formatter if you are developing with VSCode, or use `pnpm lint` command
-to lint codes under src directory.
+- **`progressBar.tick(value?: number)`**
 
-```shell
-pnpm lint
-```
+  Increase the progress bar `value`. The new progress must not exceed `total`. This must be called
+  only after `start()`.
 
-## Build Project
+   | Argument | Type | Description |
+   | -------- | ---- | ----------- |
+   | `value?`  | `number` | progress increment value; default to `1` |
 
-This template is using [`esbuild`](https://github.com/evanw/esbuild) to transpile all TypeScript
-files into a single JavaScript file.
+- **`progressBar.stop()`**
 
-```shell
-pnpm build
-node dist/index.cjs
-```
+  Stop the progress bar. This clears the bar on the terminal if `options.clearAfterStop` is set to
+  `true`. This must be called after `start()`. This acts as a no-op if called more than once.
+
+  You cannot restart a progress bar after stopping. Use a new progress bar instance in this case.
+
+- **`progressBar.log(format: string, ...arguments: any[])`**
+
+  Print a message. If the progress bar is not running or if this is a non-tty program, it acts as a
+  trivial print.
+
+  | Argument | Type | Description |
+  | -------- | ---- | ----------- |
+  | `format` | `string` | see [`util.format`](https://nodejs.org/api/util.html#utilformatformat-args) |
+  | `...arguments` | `any[]` | see [`util.format`](https://nodejs.org/api/util.html#utilformatformat-args) |
+
+  Do not directly call `process.stderr.write` or `console.error` (or write to the bar stream) when
+  the progress bar is running, as it can break the drawing.
