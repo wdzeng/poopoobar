@@ -9,10 +9,11 @@
   },
   "license": "MIT",
   "homepage": "https://github.com/wdzeng/poopoobar",
-  "bugs": {
-    "url": "https://github.com/wdzeng/poopoobar/issues",
-    "email": "me@hyperbola.me"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wdzeng/poopoobar.git"
   },
+  "bugs": "https://github.com/wdzeng/poopoobar/issues",
   "type": "module",
   "main": "src/index.ts",
   "exports": {
@@ -24,9 +25,7 @@
   },
   "files": [
     "src",
-    "dist",
-    "docs",
-    "tsconfig.json"
+    "dist"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --sourcemap",
