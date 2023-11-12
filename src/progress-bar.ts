@@ -102,7 +102,7 @@ export class ProgressBar {
         throw new Error(`width must be at least ${MIN_BAR_WIDTH}`)
       }
     }
-    if (options.bottom && (options.clearAfterStop ?? true)) {
+    if (options.bottom && options.clearAfterStop !== undefined && !options.clearAfterStop) {
       throw new Error('clearAfterStop must be true if bottom is true')
     }
 
