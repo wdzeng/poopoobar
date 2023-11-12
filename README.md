@@ -2,7 +2,7 @@
 
 A cool CLI progress bar.
 
-![demo](./docs/demo.gif)
+![demo](docs/demo.gif)
 
 - Simple: easy to use.
 - Lightweight: no dependency.
