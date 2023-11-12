@@ -1,6 +1,6 @@
 import * as util from 'node:util'
 
-import { hideCursor, showCursor } from './cursor'
+import { CursorUtil } from './cursor-util'
 import { EtaTracker } from './eta-tracker'
 import { humanizeDuration, humanizeSpeed } from './humanize'
 
@@ -47,6 +47,7 @@ enum BarState {
 export class ProgressBar {
   private readonly output: WriteStream
   private readonly isTTY: boolean
+  private readonly cursorUtil: CursorUtil
 
   private fixedOutputWidth?: number
   private get outputWidth(): number {
@@ -95,6 +96,7 @@ export class ProgressBar {
     this.fixedOutputWidth = options.width
     this.output = options.output ?? process.stderr
     this.isTTY = this.output.isTTY
+    this.cursorUtil = new CursorUtil(this.output)
     this.clearAfterStop = options.clearAfterStop ?? false
   }
 
@@ -120,9 +122,7 @@ export class ProgressBar {
       this.refresh()
     }, 1000) // Update ETA per second.
 
-    // TODO: if the user Ctrl+C the program, the cursor will not be shown. Use process.on('SIGINT')
-    // to fix this problem.
-    hideCursor(this.output)
+    this.cursorUtil.hideCursor()
     this.state = BarState.RUNNING
   }
 
@@ -342,7 +342,7 @@ export class ProgressBar {
       this.output.write('\n')
     }
 
-    showCursor(this.output)
+    this.cursorUtil.showCursor()
     this.state = BarState.STOPPED
   }
 }
