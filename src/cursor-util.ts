@@ -9,13 +9,15 @@ export const cursorRestore = isMac ? '\u001B8' : `${ESC}u`
 
 /**
  * Utility class to hide and show cursor on the terminal and handle potential events.
+ *
+ * @internal
  */
 export class CursorUtil {
   private showCursorCallback: (eventOrExitCode: number | 'SIGINT') => void
 
   /**
    * Creates a cursor utility.
-   * @param stream output stream
+   * @param stream - output stream
    */
   constructor(private readonly stream: WriteStream) {
     this.showCursorCallback = (eventOrExitCode: number | 'SIGINT') => {
@@ -28,7 +30,7 @@ export class CursorUtil {
   /**
    * Hides cursor on the terminal and registers required event handlers.
    */
-  hideCursor() {
+  hideCursor(): void {
     this.stream.write(cursorHide)
     process.stdin.resume()
     // @ts-expect-error: event must be 'SIGINT'
@@ -39,7 +41,7 @@ export class CursorUtil {
   /**
    * Shows cursor on the terminal and unregisters required event handlers.
    */
-  showCursor() {
+  showCursor(): void {
     process.removeListener('exit', this.showCursorCallback)
     process.removeListener('SIGINT', this.showCursorCallback)
     process.stdin.pause()

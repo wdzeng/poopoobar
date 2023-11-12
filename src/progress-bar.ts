@@ -12,41 +12,55 @@ const C_COLUMN_SEPARATOR = '|'
 
 /**
  * Minimum progress bar width.
+ *
+ * @public
  */
 export const MIN_BAR_WIDTH = 16
 
 /**
  * Progress bar options.
+ *
+ * @public
  */
 export interface Options {
   /**
-   * Progress bar width; default to runtime terminal width. If specified, the value must be at least
-   * {@link MIN_BAR_WIDTH}.
+   * Progress bar width.
+   *
+   * @remarks
+   * If specified, thia value must be an integer, and at least {@link MIN_BAR_WIDTH}.
+   *
+   * @defaultValue runtime terminal width
    */
   width?: number
 
   /**
    * Output stream.
-   * @default process.stderr
+   *
+   * @defaultValue `process.stderr`
    */
   output?: WriteStream
 
   /**
    * Whether to clear the progress bar after stopping.
-   * @default false
+   *
+   * @remarks
+   * If {@link Options.bottom} is set to `true`, this option must be `true`.
+   *
+   * @defaultValue matching {@link Options.bottom}
    */
   clearAfterStop?: boolean
 
   /**
    * Whether to draw the progress bar at the bottom of the terminal.
-   * @default false
+   *
+   * @defaultValue `false`
    */
   bottom?: boolean
 
   /**
-   * Whether to take actions to prevent the terminal from blinking when printing messages while the
-   * progress bar is running.
-   * @default false
+   * Whether to take actions to prevent the terminal from blinking.
+   *
+   * @defaultValue `false`
    */
   tryNotToBlink?: boolean
 }
@@ -57,6 +71,11 @@ enum BarState {
   STOPPED
 }
 
+/**
+ * Progress bar.
+ *
+ * @public
+ */
 export class ProgressBar {
   private readonly output: WriteStream
   private readonly isTTY: boolean
@@ -70,9 +89,15 @@ export class ProgressBar {
   }
 
   private _progress: number
-  public get progress() {
+  /**
+   * Current progress.
+   */
+  public get progress(): number {
     return this._progress
   }
+  /**
+   * Total progress.
+   */
   public readonly total: number
 
   private clearAfterStop: boolean
@@ -84,8 +109,9 @@ export class ProgressBar {
 
   /**
    * Creates a new progress bar.
-   * @param total total progress; must be an positive integer
-   * @param options progress bar options
+   *
+   * @param total - total progress; must be a positive integer
+   * @param options - progress bar options; default to default options
    */
   constructor(total: number, options: Options = {}) {
     if (!Number.isInteger(total)) {
@@ -119,7 +145,9 @@ export class ProgressBar {
 
   /**
    * Starts the progress bar.
-   * @throws if the progress bar has already started
+
+   * @throws `Error`
+   * If the progress bar has already started.
    */
   start(): void {
     if (this.state !== BarState.READY) {
@@ -270,10 +298,13 @@ export class ProgressBar {
   }
 
   /**
-   * Logs messages to the terminal. If the progress bar is not running, this acts as a trivial
-   * print.
-   * @param format see {@link console.log} format
-   * @param optionalParams see {@link console.log} optionalParams
+   * Logs messages to the terminal.
+   *
+   * @remarks
+   * If the progress bar is not running, this acts as a trivial print.
+   *
+   * @param format - the same as {@link console.log}
+   * @param optionalParams - the same as {@link console.log}
    */
   log(format: string, ...optionalParams: unknown[]): void {
     // Hint: never assume the message is one line. Even if the message is one line, the message may
@@ -366,9 +397,14 @@ export class ProgressBar {
 
   /**
    * Increments the progress.
-   * @param value the value to increment; default to 1
-   * @throws if the progress exceeds the total
-   * @throws if the progress bar is not running
+   *
+   * @param value - the value to increment; default to 1
+   *
+   * @throws `Error`
+   * If the progress exceeds the total after increment.
+   *
+   * @throws `Error`
+   * If the progress bar is not running.
    */
   tick(value = 1): void {
     if (!Number.isInteger(value)) {
@@ -393,8 +429,13 @@ export class ProgressBar {
   }
 
   /**
-   * Stops the progress bar. If the progress bar is already stopped, do nothing.
-   * @throws if the progress bar has not yet started
+   * Stops the progress bar.
+   *
+   * @remarks
+   * If the progress bar has stopped, this method is a no-op.
+   *
+   * @throws `Error`
+   * If the progress bar has not yet started.
    */
   stop(): void {
     if (this.state === BarState.READY) {
