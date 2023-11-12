@@ -1,8 +1,11 @@
 import type { WriteStream } from 'node:tty'
 
+const isMac = process.env.TERM_PROGRAM === 'Apple_Terminal'
 const ESC = '\u001B['
 const cursorHide = `${ESC}?25l`
 const cursorShow = `${ESC}?25h`
+export const cursorSave = isMac ? '\u001B7' : `${ESC}s`
+export const cursorRestore = isMac ? '\u001B8' : `${ESC}u`
 
 /**
  * Utility class to hide and show cursor on the terminal and handle potential events.
