@@ -1,5 +1,7 @@
 /**
  * A FIFO data structure with a fixed capacity.
+ *
+ * @internal
  */
 class Queue<T> {
   private readonly capacity: number
@@ -8,7 +10,8 @@ class Queue<T> {
 
   /**
    * Creates a queue with a fixed capacity.
-   * @param capacity the capacity of the queue
+   *
+   * @param capacity - the capacity of the queue; must be a positive integer
    */
   constructor(capacity: number) {
     if (!Number.isInteger(capacity)) {
@@ -23,8 +26,9 @@ class Queue<T> {
   }
 
   /**
-   * Push an element into the queue. If the queue is full, the oldest element is popped.
-   * @param element the element to push
+   * Pushes an element into the queue. If the queue is full, the oldest element is popped.
+   *
+   * @param element - the element to push
    */
   push(element: T) {
     if (this.content.length === this.capacity) {
@@ -39,6 +43,7 @@ class Queue<T> {
 
   /**
    * Queries the oldest element in the queue.
+   *
    * @returns the oldest element
    */
   get oldest(): T {
@@ -48,18 +53,26 @@ class Queue<T> {
 }
 
 /**
- * A tracker that tracks the ETA of a process. The ETA is calculated using a sliding window, which
- * is collection of past progress and time information. When the user queries the ETA, the tracker
- * compares the current status with the oldest one recorded in the window to calculate the value.
- * The sliding window has a fixed capacity, so when the user records a new data, the oldest data is
- * deleted if the window is full, and the second-oldest data becomes the oldest.
+ * A tracker that tracks the ETA of a process.
+ *
+ * The ETA is calculated using a sliding window, which is collection of past progress and time
+ * information. When the user queries the ETA, the tracker compares the current status with the
+ * oldest one recorded in the window to calculate the value. The sliding window has a fixed
+ * capacity, so when the user records a new data, the oldest data is deleted if the window is full,
+ * and the second-oldest data becomes the oldest.
+ *
+ * @internal
  */
 export class EtaTracker {
   private slidingWindow: Queue<{ progress: number; time: number }>
 
   /**
-   * Creates a new tracker. The tracker immediately starts.
-   * @param slidingWindowWidth sliding window width
+   * Creates a new tracker.
+   *
+   * @remarks
+   * The tracker immediately starts after the constructor is called.
+   *
+   * @param slidingWindowWidth - sliding window width
    */
   constructor(slidingWindowWidth: number) {
     this.slidingWindow = new Queue(slidingWindowWidth)
@@ -70,8 +83,9 @@ export class EtaTracker {
 
   /**
    * Updates the latest progress and calculates the ETA.
-   * @param currentProgress current progress
-   * @param total total progress
+   *
+   * @param currentProgress - current progress
+   * @param total - total progress
    * @returns latest ETA; speed is in progress per second, eta is in seconds or infinity
    */
   updateProgressAndGetLatestEta(

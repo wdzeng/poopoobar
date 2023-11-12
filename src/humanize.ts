@@ -1,23 +1,33 @@
 /**
  * Floors a non-negative number to one decimal.
+ *
+ * @param f - number to be floored; must be non-negative
+ * @returns floored value
+ *
+ * @internal
  */
 function floorToOneDecimal(f: number): string {
   return String(Math.floor(f * 10) / 10)
 }
 
 /**
- * Converts a number to two-character string prefixed with a possible space.
- * @param n number; must be non-negative integer and at most 99
+ * Converts a number to a two-character string prefixed with a possible space.
+ *
+ * @param n - number; must be non-negative integer and at most 99
  * @returns two-character string
+ *
+ * @internal
  */
 function twoChar(n: number): string {
   return n < 10 ? String(n) : ` ${String(n)}`
 }
 
 /**
- * Humanizes a speed as a string.
- * @param speed speed value in progress per second
+ * Humanizes a speed.
+ * @param speed - speed value in progress per second
  * @returns humanized speed; at most 10 characters
+ *
+ * @internal
  */
 export function humanizeSpeed(speed: number): string {
   // It is OK that speed is float number. No need to convert to integer.
@@ -58,9 +68,12 @@ export function humanizeSpeed(speed: number): string {
 }
 
 /**
- * Humanizes a duration as a string.
- * @param duration duration in seconds; can be infinity
+ * Humanizes a duration.
+ *
+ * @param duration - duration in seconds; can be infinity
  * @returns humanized duration; at most 6 characters
+ *
+ * @internal
  */
 export function humanizeDuration(duration: number): string {
   if (duration === 0) {
