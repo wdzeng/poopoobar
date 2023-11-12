@@ -92,7 +92,7 @@ try {
 
    | Argument | Type | Description |
    | -------- | ---- | ----------- |
-   | `value?`  | `number` | progress increment value; default to `1` |
+   | `value?`  | `number` | progress increment value; must be a non-negative integer; default to `1` |
 
 - **`progressBar.stop()`**
 
