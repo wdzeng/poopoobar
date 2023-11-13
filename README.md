@@ -19,17 +19,22 @@ npm install poopoobar
 
 ## Usage
 
-A simple example:
+Import the package:
 
 ```js
-import { ProgressBar } from 'poopoobar' // ESM
-const { ProgressBar } = require('poopoobar') // commonjs
+import { ProgressBar } from 'poopoobar'       // esm
+const { ProgressBar } = require('poopoobar')  // cjs
+```
 
+Example:
+
+```js
 const bar = new ProgressBar(100)
 bar.start()
 
 for (let i=0; i<100; i++) {
-  do_task()
+  // do_sync_task()      // bad: don't run synchornized task
+  await do_async_task()  // good
   bar.tick()
 }
 bar.stop()
@@ -38,16 +43,13 @@ bar.stop()
 Another example:
 
 ```js
-import { ProgressBar } from 'poopoobar' // ESM
-const { ProgressBar } = require('poopoobar') // commonjs
-
 const bar = new ProgressBar(100, { clearAfterStop: true, width: 80 })
 bar.start()
 
 try {
   for (let i=0; i<100; i+=2) {
     bar.log('Start task %d and %d', i, i+1)
-    do_two_tasks()
+    await do_two_tasks()
     bar.tick(2)
     bar.log('Task %d and %d finished', i, i+1)
   }
