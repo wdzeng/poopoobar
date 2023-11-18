@@ -181,6 +181,9 @@ export class ProgressBar {
       this.output.write(cursorSave)
       this.output.cursorTo(0, this.output.rows - 1)
       this.output.write(output)
+      // In some terminal (e.g. Windows Terminal), the last character is erased when the output
+      // width equals to the terminal. So we only erase to right when output width is less than
+      // terminal.
       if (output.length < this.outputWidth) {
         this.output.clearLine(1)
       }
@@ -189,6 +192,9 @@ export class ProgressBar {
       // At this moment the cursor is somewhere on the progress bar.
       this.output.cursorTo(0)
       this.output.write(output)
+      // In some terminal (e.g. Windows Terminal), the last character is erased when the output
+      // width equals to the terminal. So we only erase to right when output width is less than
+      // terminal.
       if (output.length < this.outputWidth) {
         this.output.clearLine(1)
       }
