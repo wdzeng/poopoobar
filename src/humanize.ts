@@ -19,7 +19,7 @@ function floorToOneDecimal(f: number): string {
  * @internal
  */
 function twoChar(n: number): string {
-  return n < 10 ? String(n) : ` ${String(n)}`
+  return n < 10 ? ` ${String(n)}` : String(n)
 }
 
 /**
