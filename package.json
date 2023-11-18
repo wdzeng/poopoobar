@@ -11,7 +11,7 @@
   "homepage": "https://github.com/wdzeng/poopoobar",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wdzeng/poopoobar.git"
+    "url": "git+https://github.com/wdzeng/poopoobar.git"
   },
   "bugs": "https://github.com/wdzeng/poopoobar/issues",
   "type": "module",
