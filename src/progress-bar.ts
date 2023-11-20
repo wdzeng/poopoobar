@@ -416,8 +416,8 @@ export class ProgressBar {
     if (!Number.isInteger(value)) {
       throw new TypeError('value must be an integer')
     }
-    if (value < 1) {
-      throw new Error('value must be at least 1')
+    if (value < 0) {
+      throw new Error('value must be non-negative')
     }
     if (this.state !== BarState.RUNNING) {
       throw new Error('progress bar is not running')
@@ -426,7 +426,7 @@ export class ProgressBar {
       throw new Error(`progress ${this._progress + value} exceeds total ${this.total}`)
     }
 
-    if (!this.isTTY) {
+    if (!this.isTTY || value === 0) {
       return
     }
 
