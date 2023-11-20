@@ -70,12 +70,12 @@ export function humanizeSpeed(speed: number): string {
 /**
  * Humanizes a duration.
  *
- * @param duration - duration in seconds; can be infinity
+ * @param duration - duration in seconds; infinity means unknown or really infinity
  * @returns humanized duration; at most 6 characters
  *
  * @internal
  */
-export function humanizeDuration(duration: number): string {
+export function humanizeDuration(duration: number | null): string {
   if (duration === 0) {
     // Treat definite zero as a special value. Report a "done" in the progress bar so that the suer
     // knows the all tasks are done. Showing 0s may confuses the user that the process is done or
@@ -83,7 +83,7 @@ export function humanizeDuration(duration: number): string {
     return 'done'
   }
 
-  if (Number.POSITIVE_INFINITY === duration) {
+  if (duration === Number.POSITIVE_INFINITY || duration === null) {
     // Treat infinity as a special value; don't show 99999d as it may be considered that the
     // speed is very slow but non-zero.
     //

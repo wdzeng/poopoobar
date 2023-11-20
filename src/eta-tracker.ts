@@ -84,13 +84,15 @@ export class EtaTracker {
   /**
    * Updates the latest progress and calculates the ETA.
    *
+   * If the total is unknown, the eta is estimated to be infinity.
+   *
    * @param currentProgress - current progress
-   * @param total - total progress
+   * @param total - total progress; `null` means unknown
    * @returns latest ETA; speed is in progress per second, eta is in seconds or infinity
    */
   updateProgressAndGetLatestEta(
     currentProgress: number,
-    total: number
+    total: number | null
   ): { speed: number; eta: number } {
     const currentTime = Date.now()
 
@@ -101,7 +103,14 @@ export class EtaTracker {
     const speed = (progressElapsed * 1000) / timeElapsed
     // ETA can be infinity when speed is 0. But if total === currentProgress, 0 / 0 === NaN, so do
     // more check.
-    const eta = total === currentProgress ? 0 : (total - currentProgress) / speed
+    let eta: number
+    if (total === currentProgress) {
+      eta = 0
+    } else if (total === null) {
+      eta = Number.POSITIVE_INFINITY
+    } else {
+      eta = (total - currentProgress) / speed
+    }
 
     this.slidingWindow.push({ progress: currentProgress, time: currentTime })
     return { eta, speed }

@@ -95,10 +95,14 @@ export class ProgressBar {
   public get progress(): number {
     return this._progress
   }
+
+  private _total: number | null
   /**
-   * Total progress.
+   * Total progress. `null` when not set.
    */
-  public readonly total: number
+  public get total(): number | null {
+    return this._total
+  }
 
   private clearAfterStop: boolean
 
@@ -110,15 +114,17 @@ export class ProgressBar {
   /**
    * Creates a new progress bar.
    *
-   * @param total - total progress; must be a positive integer
+   * @param total - total progress; must be a positive integer or `null` indicating unknown
    * @param options - progress bar options; default to default options
    */
-  constructor(total: number, options: Options = {}) {
-    if (!Number.isInteger(total)) {
-      throw new TypeError('total must be an integer')
-    }
-    if (total < 1) {
-      throw new Error('total must be at least 1')
+  constructor(total: number | null, options: Options = {}) {
+    if (total !== null) {
+      if (!Number.isInteger(total)) {
+        throw new TypeError('total must be an integer')
+      }
+      if (total < 1) {
+        throw new Error('total must be at least 1')
+      }
     }
     if (options.width !== undefined) {
       if (!Number.isInteger(options.width)) {
@@ -133,7 +139,7 @@ export class ProgressBar {
     }
 
     this._progress = 0
-    this.total = total
+    this._total = total
     this.fixedOutputWidth = options.width
     this.output = options.output ?? process.stderr
     this.isTTY = this.output.isTTY
@@ -163,7 +169,7 @@ export class ProgressBar {
     this.etaCalculator = new EtaTracker(120)
     this.etaUpdateInterval = setInterval(() => {
       // @ts-expect-error: eta calculator is not undefined when we reach here
-      this.latestEta = this.etaCalculator.updateProgressAndGetLatestEta(this._progress, this.total)
+      this.latestEta = this.etaCalculator.updateProgressAndGetLatestEta(this._progress, this._total)
       this.refresh()
     }, 1000) // Update ETA per second.
 
@@ -210,20 +216,20 @@ export class ProgressBar {
 
     // The bar looks like this:
     //
-    //   [#########====] 333/1000 (33%) | eta 30s | 20 bps
-    //   *               0.       1.      2.  3.    4.
+    //   [#########====] 333/1000 (33%) |    eta 30s |     20 bps
+    //   *               0.       1.         2.  3.        4.
     //
-    // *. bar section
-    // 0. progress and total section
-    // 1. percentage section
+    // *. bar section                (width not fixed)
+    // 0. progress and total section (width not fixed) (hidden if the total is unknown)
+    // 1. percentage section         (width = 6)
     // 2. eta text section
-    // 3. eta value section
-    // 4. speed section
+    // 3. eta value section          (2. + 3. width = 10)
+    // 4. speed section              (width = 10)
     //
     // We put the bar section at the leftmost, and then render the remaining space with eta value,
     // speed, progress and total, percentage, and eta text, in order.
     let remainingWidth = this.outputWidth - MIN_BAR_WIDTH
-    const completeRatio = this._progress / this.total
+    const completeRatio = this._total === null ? 0 : this._progress / this._total
 
     let progressAndTotalSection = ''
     let percentageSection = ''
@@ -232,7 +238,8 @@ export class ProgressBar {
 
     const renderBarSectionAndThenDraw = () => {
       const barWidth = MIN_BAR_WIDTH + remainingWidth - 2
-      const processCharCount = Math.floor(barWidth * completeRatio)
+
+      const processCharCount = this._total === null ? 0 : Math.floor(barWidth * completeRatio)
       const unprocessedCharCount = barWidth - processCharCount
       const bar = `[${C_PROCESSED_BAR.repeat(processCharCount)}${C_UNPROCESSED_BAR.repeat(
         unprocessedCharCount
@@ -240,8 +247,8 @@ export class ProgressBar {
 
       this.draw(bar + progressAndTotalSection + percentageSection + etaSection + speedSection)
 
-      // If the bar is completed, stop the interval.
-      if (this.total === this._progress) {
+      // If the bar is completed, stop the interval. This implies the total is unknown.
+      if (this._total === this._progress) {
         clearInterval(this.etaUpdateInterval)
       }
     }
@@ -260,20 +267,23 @@ export class ProgressBar {
     remainingWidth -= 7
 
     // Add progress and total section ("333/1000"). This section requires at least 2 *
-    // str(total) + 1 (slash) + 1 (space padding) + 2 (separator before ETA) spaces.
-    const progressAndTotalSectionWidth = this.total.toString().length * 2 + 4
-    if (remainingWidth < this.total.toString().length * 2 + 4) {
-      renderBarSectionAndThenDraw()
-      return
+    // str(total) + 1 (slash) + 1 (space padding) + 2 (separator before ETA) spaces. If the total is
+    // unknown, we do not show this section.
+    if (this._total !== null) {
+      const progressAndTotalSectionWidth = this._total.toString().length * 2 + 4
+      if (remainingWidth < this._total.toString().length * 2 + 4) {
+        renderBarSectionAndThenDraw()
+        return
+      }
+      progressAndTotalSection = `${this._progress}/${this._total}`.padStart(
+        this._total.toString().length * 2 + 2,
+        ' '
+      )
+      // Append an additional " |" to ETA value section. The ETA value section already has a left
+      // space padding, so ne need to append here.
+      etaSection = ` ${C_COLUMN_SEPARATOR}${etaSection}`
+      remainingWidth -= progressAndTotalSectionWidth
     }
-    progressAndTotalSection = `${this._progress}/${this.total}`.padStart(
-      this.total.toString().length * 2 + 2,
-      ' '
-    )
-    // Append an additional " |" to ETA value section. The ETA value section already has a left
-    // space padding, so ne need to append here.
-    etaSection = ` ${C_COLUMN_SEPARATOR}${etaSection}`
-    remainingWidth -= progressAndTotalSectionWidth
 
     // Append rate section ("20 bps"). This section requires exactly 13 spaces.
     if (remainingWidth < 13) {
@@ -283,14 +293,27 @@ export class ProgressBar {
     speedSection = ` ${C_COLUMN_SEPARATOR} ${humanizeSpeed(this.latestEta.speed).padStart(10, ' ')}`
     remainingWidth -= 13
 
-    // Add percentage section ("33%"). This section requires exactly 6 spaces.
-    if (remainingWidth < 6) {
-      renderBarSectionAndThenDraw()
-      return
+    // Add percentage section ("33%"). This section requires exactly 6 spaces. If the total is
+    // unknown, we do not show this section.
+
+    if (this._total === null) {
+      if (remainingWidth < 8) {
+        renderBarSectionAndThenDraw()
+        return
+      }
+      // Append an additional " |" to ETA value section. The ETA value section already has a left
+      // space padding, so ne need to append here.
+      percentageSection = ' (? %)'
+      etaSection = ` ${C_COLUMN_SEPARATOR}${etaSection}`
+      remainingWidth -= 8
+    } else {
+      if (remainingWidth < 6) {
+        renderBarSectionAndThenDraw()
+        return
+      }
+      percentageSection = `(${Math.floor(completeRatio * 100)}%)`.padStart(6, ' ')
+      remainingWidth -= 6
     }
-    const percentage = `(${Math.floor(completeRatio * 100)}%)`.padStart(6, ' ')
-    percentageSection = percentage
-    remainingWidth -= 6
 
     // Add ETA text (" eta"). This section requires exactly 4 spaces.
     if (remainingWidth < 4) {
@@ -422,8 +445,8 @@ export class ProgressBar {
     if (this.state !== BarState.RUNNING) {
       throw new Error('progress bar is not running')
     }
-    if (this._progress + value > this.total) {
-      throw new Error(`progress ${this._progress + value} exceeds total ${this.total}`)
+    if (this._total !== null && this._progress + value > this._total) {
+      throw new Error(`progress ${this._progress + value} exceeds total ${this._total}`)
     }
 
     if (!this.isTTY) {
@@ -431,6 +454,41 @@ export class ProgressBar {
     }
 
     this._progress += value
+    this.refresh()
+  }
+
+  /**
+   * Updates the total progress.
+   *
+   * @param total the total progress
+   *
+   * @public
+   */
+  updateTotal(total: number | null): void {
+    // Total is not changed, so we do not need to update or refresh the bar.
+    if (this._total === total) {
+      return
+    }
+
+    // We does not allow to set total from known to unknown, so total here must not be null.
+    if (total === null) {
+      throw new TypeError('total must not be set to unknown once determined')
+    }
+    if (!Number.isInteger(total)) {
+      throw new TypeError('total must be an integer')
+    }
+    if (total < 1) {
+      throw new Error('total must be at least 1')
+    }
+    if (total < this._progress) {
+      throw new Error(`total ${total} is less than current progress ${this._progress}`)
+    }
+
+    if (!this.isTTY) {
+      return
+    }
+
+    this._total = total
     this.refresh()
   }
 
