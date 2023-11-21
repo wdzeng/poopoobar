@@ -14,6 +14,17 @@
     "url": "git+https://github.com/wdzeng/poopoobar.git"
   },
   "bugs": "https://github.com/wdzeng/poopoobar/issues",
+  "keywords": [
+    "cli",
+    "tty",
+    "progress",
+    "progressbar",
+    "bar",
+    "status",
+    "statusbar",
+    "utility",
+    "widget"
+  ],
   "type": "module",
   "main": "src/index.ts",
   "exports": {
